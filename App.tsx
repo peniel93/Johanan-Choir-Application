@@ -1,20 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
 
-export default function App() {
+import { StatusBar } from 'expo-status-bar';
+
+import { AppAccessGate } from './src/components/AppAccessGate';
+import { AuthProvider } from './src/context/AuthContext';
+import { LanguageProvider } from './src/context/LanguageContext';
+import { ThemeProvider, useAppTheme } from './src/context/ThemeContext';
+import { RootNavigator } from './src/navigation/RootNavigator';
+
+function AppContent() {
+  const { isDark } = useAppTheme();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <AppAccessGate>
+      <AuthProvider>
+        <RootNavigator />
+        <StatusBar style={isDark ? 'light' : 'dark'} />
+      </AuthProvider>
+    </AppAccessGate>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
+    </ThemeProvider>
+  );
+}
